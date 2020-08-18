@@ -32,6 +32,11 @@ public class Movimentacao {
 
 	@ManyToMany
 	private List<Categoria> categorias;
+	
+	@Override
+	public String toString() {
+		return "Conta: " + conta.getTitular() + " - " + data + ", Descrição: " + descricao + ", Valor: " + valor;
+	}
 
 	public List<Categoria> getCategorias() {
 		return categorias;

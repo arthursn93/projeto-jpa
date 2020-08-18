@@ -13,9 +13,14 @@ public class Categoria {
 	private Long id;
 	private String nome;
 	
+	@Override
+	public String toString() {
+		return nome + " - " + id;
+	}
+	
 	@Deprecated
-	public Categoria(String nome) {
-		this.nome = nome;
+	public Categoria() {
+		//this.nome = nome;
 	}
 	
 	public Long getId() {
