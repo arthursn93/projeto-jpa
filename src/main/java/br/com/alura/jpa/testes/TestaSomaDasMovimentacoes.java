@@ -6,28 +6,34 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Root;
+
+import br.com.alura.jpa.modelo.Movimentacao;
 
 public class TestaSomaDasMovimentacoes {
 
 	public static void main(String[] args) {
 		
+		// EntityManager faz a conexão com banco de dados pelo persistence.xml
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("contas");
 		EntityManager em = emf.createEntityManager();
 		
-		String jpql = "select sum(m.valor) from Movimentacao m";
+		// Criteria builder cria CriteriaQuery para receber o tipo de objeto (BigDecimal)
+		CriteriaBuilder builder = em.getCriteriaBuilder();         
+		CriteriaQuery<BigDecimal> query = builder.createQuery(BigDecimal.class);
 		
-		TypedQuery<BigDecimal> query = em.createQuery(jpql,BigDecimal.class);
-		BigDecimal somaDasMovimentacoes = query.getSingleResult();
+		// Root pra referenciar a raíz da nossa query, que é do tipo Movimentacao
+		Root<Movimentacao> root = query.from(Movimentacao.class);
 		
-		System.out.println("Soma total das movimentações: " + somaDasMovimentacoes);
+		// select sum(m.valor)
+		Expression<BigDecimal> sum = builder.sum(root.<BigDecimal>get("valor")); 		
+		query.select(sum);
 		
-		String jpql2 = "select avg(m.valor) from Movimentacao m";
-
-		TypedQuery<Double> query2 = em.createQuery(jpql2,Double.class);
-		Double mediaDasMovimentacoes = query2.getSingleResult().doubleValue();
-		
-		System.out.println("Média total das movimentações: " + mediaDasMovimentacoes);
-
+		//Executa a query
+		TypedQuery<BigDecimal> typedQuery = em.createQuery(query);
+		System.out.println("Soma total das movimentações: " + typedQuery.getSingleResult());
 	}
-
 }
